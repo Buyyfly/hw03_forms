@@ -84,4 +84,3 @@ def post_edit(request, post_id):
     if post.author == request.user:
         return render(request, 'posts/create_post.html', context)
     return redirect('posts:post_detail', post_id)
-
