@@ -20,14 +20,33 @@
           {% endif %}
         </div>
         <div class="card-body">
-          <form method="post" >
+          {% load user_filters %} {# Загружаем фильтры #}
+          {% if form.errors %}
+            {% for field in form %}
+              {% for error in field.errors %}
+                <div class="alert alert-danger">
+                  {{ error|escape }}
+                </div>
+              {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+              <div class="alert alert-danger">
+                {{ error|escape }}
+              </div>
+            {% endfor %}
+          {% endif %}
+          <form method="post" action
+                  {% if form.instance.pk %}
+                    "{% url 'posts:post_edit' form.instance.pk %}"
+                  {% else %}
+                    "{% url 'posts:post_create'  %}"
+                  {% endif %}
+          >
             {% csrf_token %}
             <div class="form-group row my-3 p-3">
-              <p>
-                Текст поста
-                <span class="required text-danger" >*</span>
-              </p>
-                {{ form.text }}
+              <label for="{{ form.text.id_for_label }}">Текст поста<span class="required text-danger" >*</span>:</label>
+              {{ form.text }}
+
               <small id="id_text-help" class="form-text text-muted">
                 {% if form.instance.pk %}
                   Текст поста
@@ -37,7 +56,7 @@
               </small>
             </div>
             <div class="form-group row my-3 p-3">
-              <p>Группа</p>
+              <label for="{{ form.group.id_for_label }}">Группа:</label>
               {{ form.group }}
               <small id="id_group-help" class="form-text text-muted">
                 Группа, к которой будет относиться пост
